@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>English Phonotactics — Interactive Demo</title><link rel="stylesheet" href="../../showcase.css"></head><body>
+<header class="nav"><div class="shell nav-inner"><a href="../../../index.html#projects" class="brand"><span class="logo" aria-hidden="true"><i></i><i></i><i></i></span>Moses Im</a><nav class="nav-right"><a href="../../english-phonotactics/index.html">Project</a><a href="../../../index.html#research">Research</a><a href="../../../index.html#projects">Projects</a></nav></div></header>
+<main class="shell"><nav class="crumb"><a href="../../../index.html#projects">Projects</a><span>/</span><a href="../index.html">English Phonotactics</a><span>/</span><span>Interactive demo</span></nav>
+<section class="demo-header"><p class="eyebrow">Live demonstration · English phonotactics</p><h1>A syllable generator.</h1><p class="subtitle">Generate random onset–nucleus–coda sequences constrained by a simplified sonority scale. The result is a candidate sound sequence, not necessarily an English word.</p></section>
+<section class="panel" aria-label="Syllable controls"><div class="form-row"><div class="field"><label for="count">Number of syllables</label><select id="count"><option value="3">3 syllables</option><option value="5" selected>5 syllables</option><option value="10">10 syllables</option></select></div><button class="run" id="generate">Generate syllables</button></div><div id="status" class="feedback" aria-live="polite">Generated locally with a browser port of the original Python rules.</div></section>
+<section class="panel" aria-label="Generated syllables"><p class="eyebrow">Output</p><h2>Generated candidates.</h2><div class="output-list" id="syllables"></div><div class="terminal" id="terminal" role="status" aria-live="polite"></div>
+<details class="advanced"><summary>Run the Python algorithm in your browser</summary><div class="python-inner"><p>This mode downloads Pyodide (a browser-based Python interpreter) and executes a source-derived Python implementation of the generator locally in your browser. The first load needs an internet connection and may take a moment; no inputs or results are uploaded.</p><button class="run" id="python">Run Python in browser</button><div class="status" id="python-status" aria-live="polite"></div></div></details></section>
+<section class="section" style="padding-top:50px"><p class="eyebrow">What you're seeing</p><p class="copy">The generator first selects an optional onset with rising sonority, then a vowel nucleus, then an optional coda with falling sonority. It uses a randomly chosen target cluster length and may stop early. The inventory is deliberately simplified and occasionally produces unattested clusters.</p><p class="minor">The visual display separates the constituent parts; the terminal view reproduces the style of output from the Python script. <a class="secondary" href="https://github.com/7riangle/English-Phonotactics-Project" target="_blank" rel="noopener">View the project source</a></p><div class="actions"><a class="primary" href="../../../index.html#projects">Return to homepage</a><a class="secondary" href="../index.html">Project overview</a></div></section></main>
+<footer class="shell"><span>© Moses Im</span><span>Local processing · No data saved</span></footer>
+<script src="../../demo-engine.js"></script><script src="../../python-runner.js"></script>
+<script>
+'use strict';
+const count=document.getElementById('count');
+const output=document.getElementById('syllables');
+const terminal=document.getElementById('terminal');
+function render(items,kind){
+  output.replaceChildren();
+  items.forEach((item,i)=>{
+    const d=document.createElement('div');d.className='output-item';
+    const w=document.createElement('div');w.className='output-word';w.textContent=item.word;
+    const meta=document.createElement('div');meta.className='output-part';
+    meta.textContent=`O: ${item.onset.join('')||'∅'} · N: ${item.nucleus.join('')} · C: ${item.coda.join('')||'∅'}`;
+    d.append(w,meta);output.appendChild(d);
+  });
+  terminal.textContent='# Terminal-style output from Phonotactics.py\n'+items.map(x=>x.word).join('\n')+'\n\n# '+(kind==='python'?'Executed with Pyodide / original Python':'Instant browser adaptation');
+}
+document.getElementById('generate').addEventListener('click',()=>{
+  const n=Number(count.value);render(MoseDemo.generate(n),'browser');
+  document.getElementById('status').textContent='New random candidates generated. Each click produces a different sample.';
+});
+document.getElementById('python').addEventListener('click',async e=>{
+  const b=e.currentTarget,s=document.getElementById('python-status');b.disabled=true;s.textContent='Loading the Python runtime and project source…';
+  try{const result=await MosePython.phonotactics(Number(count.value));render(result,'python');s.textContent='Python implementation completed successfully inside your browser.';}
+  catch(err){s.textContent='Python runtime unavailable: '+err.message+'  The instant browser demonstration above still works.'}
+  finally{b.disabled=false}
+});
+render(MoseDemo.generate(Number(count.value)),'browser');
+</script></body></html>

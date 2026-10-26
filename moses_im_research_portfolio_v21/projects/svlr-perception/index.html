@@ -1,0 +1,120 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#fff"><meta name="description" content="A seven-step brood/brewed Scottish English vowel-perception experiment developed in jsPsych by Moses Im."><title>Speech Perception Experiment — Moses Im</title><style>
+    :root{--ink:#101114;--muted:#686970;--line:#e9e9eb;--accent:#496657;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif}
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:#fff;color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}
+    a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:5px;border-radius:5px}
+    ::selection{background:#dfe9e2}
+    .shell{width:min(950px,calc(100% - 56px));margin:0 auto}
+    .nav{height:68px;position:sticky;top:0;z-index:9;border-bottom:1px solid rgba(0,0,0,.055);background:rgba(255,255,255,.94);backdrop-filter:blur(20px)}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;height:100%;gap:20px}
+    .brand{font-size:16px;font-weight:600;letter-spacing:-.04em;display:flex;align-items:center;gap:12px}
+    .logo{display:flex;align-items:center;gap:6px}
+    .logo i{width:9px;height:9px;background:#141518;display:block}
+    .logo i:first-child{border-radius:50%}.logo i:nth-child(2){border-radius:1px}.logo i:nth-child(3){width:11px;height:10px;clip-path:polygon(50% 0,100% 100%,0 100%)}
+    .nav-right{display:flex;gap:28px;align-items:center}.nav-right a{font-size:13px;color:#8e8e94;font-weight:350}.nav-right a:hover{color:#1d1d1f}
+    .crumb{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:13px;color:#96969c;margin:40px 0 80px}
+    .crumb a:hover{color:var(--ink)}
+    .overline{font-size:11px;color:#888990;text-transform:uppercase;font-weight:650;letter-spacing:.16em;margin:0 0 20px}
+    h1{font-size:clamp(49px,8vw,90px);font-weight:700;letter-spacing:-.07em;line-height:1.035;margin:0;max-width:850px}
+    .intro{font-size:clamp(18px,2vw,23px);max-width:790px;line-height:1.6;letter-spacing:-.025em;color:#5b5c62;margin:30px 0 0}
+    .metadata{margin:32px 0 0;display:flex;gap:11px;flex-wrap:wrap}.pill{padding:8px 13px;background:#f5f5f7;border-radius:99px;color:#717178;font-size:12px}
+    .buttons{display:flex;gap:15px;align-items:center;flex-wrap:wrap;margin:32px 0 0}
+    .primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:none;border-radius:999px;background:#101114;padding:13px 22px;color:#fff;font-size:14px;font-weight:550;transition:transform .2s,background .2s}
+    .primary:hover{background:#36373b;transform:translateY(-2px)}
+    .secondary{color:var(--accent);font-size:14px;font-weight:530}.secondary:hover{text-decoration:underline;text-underline-offset:4px}
+    .hero{padding-bottom:100px}
+    .section{border-top:1px solid var(--line);padding:75px 0 86px}
+    .section-grid{display:grid;grid-template-columns:230px minmax(0,1fr);gap:55px}
+    .section-num{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#8e8f94;font-weight:620}
+    h2{font-size:clamp(29px,3.4vw,45px);line-height:1.12;letter-spacing:-.055em;font-weight:675;margin:0 0 22px}
+    p.copy{font-size:17px;line-height:1.78;color:#56575d;margin:0 0 18px}
+    .smallcopy{color:#76777e;font-size:13px;line-height:1.7}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:25px}
+    .panel{border:1px solid #e8e8eb;border-radius:20px;padding:24px;background:#fff}
+    .panel .label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#8b8b91;font-weight:600;margin:0 0 15px}
+    .panel h3{font-size:22px;font-weight:640;letter-spacing:-.045em;line-height:1.2;margin:0 0 12px}
+    .panel p{font-size:14px;line-height:1.65;color:#63646b;margin:0}
+    .continuum{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:26px 0 10px}
+    .continuum span{display:grid;place-items:center;height:68px;background:#f5f5f7;border-radius:11px;color:#46474c;font-size:15px;font-weight:600}
+    .axis-labels{display:flex;justify-content:space-between;color:#8d8d93;font-size:11px;letter-spacing:.05em}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:30px 0 0}
+    .stat{padding:22px;background:#f7f7f8;border-radius:15px}.stat strong{font-size:31px;font-weight:650;letter-spacing:-.06em;display:block}.stat span{font-size:12px;line-height:1.5;color:#74757d;display:block;margin-top:6px}
+    .reference-list{padding:0;margin:26px 0 0;list-style:none;border-top:1px solid var(--line)}
+    .reference-list li{border-bottom:1px solid var(--line);padding:16px 0;color:#62636a;font-size:13px;line-height:1.7}
+    .reference-list li strong{font-weight:600;color:#313238}
+    .source-purpose{display:block;color:#8a8b90;font-size:12px;margin-top:4px}
+    .steps{padding:0;margin:20px 0 0;list-style:none;counter-reset:step}
+    .steps li{counter-increment:step;padding:19px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:35px 1fr;gap:10px;font-size:15px;line-height:1.65;color:#595a60}
+    .steps li:before{content:counter(step, decimal-leading-zero);font-size:12px;color:#929299;font-weight:600;padding-top:3px}
+    .steps strong{color:#222328;font-weight:600}
+    .demo-section{padding:65px 0 85px;border-top:1px solid var(--line)}
+    .demo-inner{background:#f5f5f7;border-radius:26px;padding:44px 46px}
+    .demo-inner h2{margin-bottom:15px}
+    .demo-inner p{font-size:16px;color:#65666d;line-height:1.72;max-width:710px}
+    footer{border-top:1px solid var(--line);padding:26px 0 35px;display:flex;justify-content:space-between;gap:20px;font-size:12px;color:#96969c}
+    @media(max-width:750px){.shell{width:calc(100% - 36px)}.nav{height:59px}.nav-right{gap:13px}.nav-right a{font-size:12px}.brand{font-size:14px}.crumb{margin:24px 0 64px}.hero{padding-bottom:75px}.section{padding:58px 0 65px}.section-grid{grid-template-columns:1fr;gap:23px}.two-col{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:15px}.stat strong{font-size:25px}.continuum{gap:4px}.continuum span{height:57px;border-radius:7px}.demo-inner{padding:30px 23px}.buttons{gap:18px}footer{flex-direction:column;gap:8px}}
+    @media(max-width:380px){.nav-right{gap:9px}.nav-right a{font-size:11px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
+</style></head><body>
+<header class="nav"><div class="shell nav-inner"><a class="brand" href="../../index.html#projects" aria-label="Moses Im — back to projects"><span class="logo" aria-hidden="true"><i></i><i></i><i></i></span>Moses Im</a><nav class="nav-right" aria-label="Site navigation"><a href="../../index.html#about">About</a><a href="../../index.html#research">Research</a><a href="../../index.html#projects">Projects</a><a href="../../index.html#contact">Contact</a></nav></div></header>
+<main class="shell">
+  <div class="crumb"><a href="../../index.html#projects">Projects</a><span> / </span><span>Speech Perception Experiment</span></div>
+  <section class="hero">
+    <p class="overline">Online Experiments for Language Scientists · University of Edinburgh</p>
+    <h1>When does vowel length change what we hear?</h1>
+    <p class="intro">A jsPsych-based speech-perception task developed from Ferragne et al.’s (2011) <em>brood–brewed</em> paradigm, with an extended two-context design and a short working demonstration.</p>
+    <div class="metadata"><span class="pill">jsPsych 8</span><span class="pill">Speech perception</span><span class="pill">7-step proposed design</span><span class="pill">Student research project</span></div>
+    <div class="buttons"><a class="primary" href="demo/index.html">Try the experiment <span aria-hidden="true">·</span></a><a class="secondary" href="#design">How it was designed ↓</a></div>
+  </section>
+  <section class="section section-grid" id="background">
+    <div class="section-num">01 / Background</div>
+    <div><h2>The question behind the experiment.</h2><p class="copy">In Scottish English, vowel length depends partly on a word’s phonological and morphological structure. The Scottish Vowel Length Rule (SVLR) means that the vowel in <em>brood</em> is typically shorter than in <em>brewed</em> (Aitken, 1981; Scobbie et al., 1999). But do listeners experience that difference as two distinct categories, or as predictable variation?</p><p class="copy">This project began from <strong>Ferragne et al. (2011)</strong>, who investigated how listeners identify <em>brood</em> versus <em>brewed</em> along a vowel-duration continuum. I adapted that methodological starting point for a web-based experiment and introduced a comparison between two sentence contexts.</p><p class="smallcopy">Designed and implemented as a University of Edinburgh coursework experiment. This is an experimental demonstration, not a published or validated finding.</p></div>
+  </section>
+  <section class="section section-grid" id="design">
+    <div class="section-num">02 / Experimental design</div>
+    <div><h2>Building on earlier work.</h2><p class="copy"><strong>Following Ferragne et al. (2011)</strong>, I proposed a seven-step vowel-duration continuum (approximately <strong>50–185 ms</strong>) based on Praat PSOLA resynthesis. This was a <strong>planned stimulus manipulation</strong>, not a fully produced and validated seven-step audio set. The coursework implementation used my own recording as a placeholder to demonstrate the identification task.</p><p class="copy">My adaptation puts the target word in a fixed carrier sentence rather than in isolation, adds a second sentence-context block, and collects a <strong>1–7 confidence judgement</strong> instead of Ferragne et al.’s category-goodness rating.</p>
+      <div class="continuum" aria-label="Seven proposed stimulus steps"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div><div class="axis-labels"><span>Step 1</span><span>Step 7</span></div>
+      <div class="two-col">
+        <div class="panel"><p class="label">Block 01 · Carrier</p><h3>Say [TARGET] again.</h3><p>The target sits inside a fixed carrier, rather than phrase-finally, to reduce boundary-related lengthening (Wightman et al., 1992).</p></div>
+        <div class="panel"><p class="label">Block 02 · Context</p><h3>The witches ______ inside the castle.</h3><p>Both written alternatives can fit this frame; the surrounding meaning may still bias listeners toward one interpretation.</p></div>
+      </div>
+      <div class="stats"><div class="stat"><strong>7</strong><span>Proposed duration steps</span></div><div class="stat"><strong>2</strong><span>Sentence contexts</span></div><div class="stat"><strong>280</strong><span>Originally planned trials</span></div></div>
+    </div>
+  </section>
+  <section class="section section-grid" id="implementation">
+    <div class="section-num">03 / Implementation</div>
+    <div><h2>Adapted and implemented in jsPsych.</h2><p class="copy">I developed the browser-based implementation with <strong>JavaScript and jsPsych</strong>: preloading, trial randomisation, audio playback, F/J or mouse responses, response time, and confidence judgements. The online procedure also adapts the anti-phase headphone screening method described by <strong>Woods et al. (2017)</strong>.</p><p class="copy"><strong>Stimulus limitation.</strong> Ferragne et al. used a Glasgow speaker’s recording. In my coursework implementation I used <strong>my own recording as placeholder audio</strong>. The proposed seven-duration continuum was not completed as a validated stimulus set, so this demonstration cannot test a psychometric identification curve or provide evidence about Scottish listeners’ categorisation.</p>
+    <ol class="steps">
+      <li><div><strong>Preload</strong> the representative placeholder audio files for the two contexts (along with the audio and headphone checks).</div></li>
+      <li><div><strong>Present a fixation</strong> for 500 ms, then play the stimulus.</div></li>
+      <li><div><strong>Collect a forced-choice judgement:</strong> F for BROOD, J for BREWED (or on-screen buttons).</div></li>
+      <li><div><strong>Ask for confidence</strong> on a 1–7 slider, then advance to the next randomised stimulus.</div></li>
+    </ol>
+    <p class="smallcopy">Planned coursework protocol: 20 repetitions per proposed step and context (7 × 20 × 2 = 280 main trials). The live demo is intentionally much smaller and does not instantiate this full design. The single context frame may itself favour BREWED, so this block is exploratory rather than a controlled test of morphological conditioning.</p></div>
+  </section>
+  <section class="section section-grid" id="demo-design">
+    <div class="section-num">04 / Portfolio adaptation</div>
+    <div><h2>Original sequence. A very short demonstration.</h2><p class="copy">The public demo keeps the original sequence—consent, volume calibration, Woods et al.’s six-trial headphone check (with the original pass threshold), practice, and two blocks. It is shortened to <strong>one practice trial per context and two main trials per context</strong>, using representative placeholder audio rather than pretending to present a seven-step acoustic continuum.</p>
+      <div class="two-col"><div class="panel"><p class="label">Planned protocol</p><h3>280 proposed trials</h3><p>20 repetitions × 7 steps × 2 contexts, in addition to six headphone trials and four practice trials.</p></div><div class="panel"><p class="label">Portfolio demonstration</p><h3>4 main trials</h3><p>2 representative plays in each context, with all six headphone checks and 2 practice trials.</p></div></div>
+      <p class="smallcopy" style="margin-top:19px"><strong>No response data are saved or transmitted.</strong> This is a non-research portfolio demo. PHP saving is not deployed. This demonstration preserves the task sequence, not the planned continuum manipulation or the full research protocol.</p></div>
+  </section>
+  <section class="section section-grid" id="references">
+    <div class="section-num">05 / Sources</div>
+    <div><h2>Methodological foundations.</h2>
+      <p class="copy">This project extends an existing perceptual paradigm rather than claiming to invent the method. These are the principal sources behind its design:</p>
+      <ul class="reference-list">
+        <li><strong>Ferragne, E., Bedoin, N., Boulenger, V., &amp; Pellegrino, F. (2011).</strong> The perception of a derived contrast in Scottish English. <em>Proceedings of ICPhS XVII</em>, 667–670. <span class="source-purpose">Identification continuum and original perception task.</span></li>
+        <li><strong>Aitken, A. J. (1981).</strong> The Scottish Vowel-length Rule. In <em>So meny people, longages and tonges</em>, 131–157. <span class="source-purpose">Linguistic background for SVLR.</span></li>
+        <li><strong>Scobbie, J. M., Hewlett, N., &amp; Turk, A. E. (1999).</strong> Standard English in Edinburgh and Glasgow: The Scottish Vowel Length Rule revealed. In <em>Urban Voices</em>, 230–245. <span class="source-purpose">Speaker differences and conditioning of vowel duration.</span></li>
+        <li><strong>Wightman, C. W., Shattuck-Hufnagel, S., Ostendorf, M., &amp; Price, P. J. (1992).</strong> Segmental durations in the vicinity of prosodic phrase boundaries. <em>JASA, 91</em>(3), 1707–1717. <span class="source-purpose">Motivation for avoiding a phrase-final target.</span></li>
+        <li><strong>Woods, K. J. P., Siegel, M. H., Traer, J., &amp; McDermott, J. H. (2017).</strong> Headphone screening to facilitate web-based auditory experiments. <em>Attention, Perception, &amp; Psychophysics, 79</em>(7), 2064–2072. <span class="source-purpose">Anti-phase headphone check.</span></li>
+      </ul>
+      <p class="smallcopy" style="margin-top:26px"><strong>Headphone-screening stimuli and source.</strong> The six anti-phase screening files used in this demonstration match the stimulus set distributed with the <a href="https://github.com/mcdermottLab/HeadphoneCheck" target="_blank" rel="noopener noreferrer" style="color:#496657;text-decoration:underline;text-underline-offset:3px">McDermott Lab HeadphoneCheck repository (GitHub)</a>, associated with Woods et al. (2017). The screening method and sounds are not my original work. The repository is distributed under the <a href="https://github.com/mcdermottLab/HeadphoneCheck/blob/master/LICENSE" target="_blank" rel="noopener noreferrer" style="color:#496657;text-decoration:underline;text-underline-offset:3px">BSD 2-Clause license</a>. The downloadable project includes its license notice. Exact provenance of the locally supplied audio files should be confirmed before publication.</p>
+    </div>
+  </section>
+</main>
+<section class="demo-section"><div class="shell"><div class="demo-inner"><p class="overline">Interactive demo</p><h2>Try the experiment.</h2><p>Experience the consent, volume check, headphone screening, and two representative trials in each of the two experimental blocks. This is a demonstration of the workflow, not the proposed seven-step duration continuum. <strong>No response data are saved or transmitted.</strong></p><div class="buttons"><a class="primary" href="demo/index.html">Open the demonstration <span aria-hidden="true">·</span></a><a class="secondary" href="../../index.html#projects">Back to projects</a></div></div></div></section>
+<footer class="shell"><span>© Moses Im</span><span>Student research project · 2026</span></footer>
+</body></html>

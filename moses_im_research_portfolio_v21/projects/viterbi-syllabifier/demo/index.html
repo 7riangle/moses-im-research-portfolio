@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Viterbi Syllabifier — Interactive Demo</title><link rel="stylesheet" href="../../showcase.css"></head><body>
+<header class="nav"><div class="shell nav-inner"><a href="../../../index.html#projects" class="brand"><span class="logo" aria-hidden="true"><i></i><i></i><i></i></span>Moses Im</a><nav class="nav-right"><a href="../index.html">Project</a><a href="../../../index.html#research">Research</a><a href="../../../index.html#projects">Projects</a></nav></div></header>
+<main class="shell"><nav class="crumb"><a href="../../../index.html#projects">Projects</a><span>/</span><a href="../index.html">Viterbi Syllabifier</a><span>/</span><span>Interactive demo</span></nav>
+<section class="demo-header"><p class="eyebrow">Live demonstration · Sequence modelling</p><h1>Follow the Viterbi path.</h1><p class="subtitle">Choose English or Korean, enter a sound sequence, and see the model's best-scoring onset–nucleus–coda labelling with the underlying log-score lattice.</p></section>
+<section class="panel"><div class="lang-tabs" role="tablist" aria-label="Language"><button class="lang-tab active" data-lang="en" role="tab" aria-selected="true">English</button><button class="lang-tab" data-lang="ko" role="tab" aria-selected="false">Korean · 한국어</button></div><div class="form-row"><div class="field"><label id="input-label" for="sequence">ARPAbet phoneme sequence</label><input id="sequence" value="S T R AE N D" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="input-help"></div><button class="run" id="decode">Decode sequence</button></div><div class="examples" id="examples"></div><div class="feedback" id="input-help">Use space-separated ARPAbet symbols; for example S T R AE N D. This is not an English spelling-to-sound converter.</div><div class="feedback" id="status" aria-live="polite"></div></section>
+<section class="panel"><p class="eyebrow">Best path</p><h2>Inferred syllable roles.</h2><div class="state-row" id="states" aria-live="polite"></div><p class="minor">O = Onset &nbsp;·&nbsp; N = Nucleus &nbsp;·&nbsp; C = Coda. These are the toy HMM's predictions, not verified syllable boundaries.</p><div class="terminal" id="terminal" aria-live="polite"></div></section>
+<section class="panel"><p class="eyebrow">Dynamic programming</p><h2>Log-score lattice.</h2><p class="copy">Each column is an observation; each row is a possible state. The highlighted cell at each step belongs to the final best Viterbi path. Darker cells represent relatively higher accumulated log-scores within this sequence.</p><div class="lattice-wrap" id="lattice"></div><div class="legend">Values are cumulative log-scores, not probabilities. −∞ indicates an impossible or heavily penalised path in the source implementation.</div>
+<details class="advanced"><summary>Run the Python HMM in your browser</summary><div class="python-inner"><p>Load the Python HMM and Viterbi implementation from this portfolio into Pyodide, execute the original decoder directly in your browser, and display its output in the same lattice view. An internet connection is needed for Pyodide's first load; no input leaves your browser.</p><button class="run" id="python">Run Python in browser</button><div class="status" id="python-status" aria-live="polite"></div></div></details></section>
+<section class="section" style="padding-top:45px"><p class="eyebrow">About the model</p><p class="copy">The original model uses hand-set transition and emission scores, rather than parameters learned from annotated speech. It may return unexpected labellings, especially near word boundaries or with ambiguous/unseen phones. Those outcomes are informative about the toy model's assumptions.</p><p class="minor">English uses ARPAbet-style phoneme tokens from the source inventory; Korean decomposes precomposed Hangul into jamo. <a class="secondary" href="https://github.com/7riangle/viterbi-syllabifier" target="_blank" rel="noopener">Original repository</a></p><div class="actions"><a class="primary" href="../../../index.html#projects">Return to homepage</a><a class="secondary" href="../index.html">Project overview</a></div></section></main>
+<footer class="shell"><span>© Moses Im</span><span>Client-side computation · No data saved</span></footer>
+<script src="../../demo-engine.js"></script><script src="../../python-runner.js"></script>
+<script>
+'use strict';
+let language='en';
+const text=document.getElementById('sequence'),status=document.getElementById('status'),examples=document.getElementById('examples');
+const sampleSets={en:[{value:'S T R AE N D',title:'strand'},{value:'K AE T',title:'cat'},{value:'P L EY',title:'play'}],ko:[{value:'한국말',title:'한국말'},{value:'사과',title:'사과'},{value:'학교',title:'학교'}]};
+function show(result,origin){
+  MoseDemo.renderStates(document.getElementById('states'),result);
+  MoseDemo.renderLattice(document.getElementById('lattice'),result);
+  document.getElementById('terminal').textContent='>>> '+(language==='en'?`phones = ${JSON.stringify(result.phones)}`:`jamo = ${JSON.stringify(result.phones)}`)+'\n'+`states = ${JSON.stringify(result.path)}`+'\n\n# '+(origin==='python'?'Executed with original Python':'Instant browser adaptation');
+  status.textContent=`Decoded ${result.phones.length} symbols. ${origin==='python'?'Original Python':'Instant browser demo'} result shown.`;
+}
+function redrawExamples(){
+  examples.replaceChildren();
+  sampleSets[language].forEach(item=>{
+    const b=document.createElement('button');b.className='example';b.type='button';b.textContent=item.title;b.addEventListener('click',()=>{text.value=item.value;runJS()});examples.appendChild(b);
+  });
+}
+function runJS(){
+ try{show(MoseDemo.decode(language,text.value),'browser')}catch(err){status.textContent=err.message;document.getElementById('states').replaceChildren();document.getElementById('lattice').replaceChildren()}
+}
+function setLang(next){
+  language=next;
+  document.querySelectorAll('.lang-tab').forEach(b=>{const selected=b.dataset.lang===next;b.classList.toggle('active',selected);b.setAttribute('aria-selected',String(selected))});
+  document.getElementById('input-label').textContent=next==='en'?'ARPAbet phoneme sequence':'Korean word (Hangul)';
+  document.getElementById('input-help').textContent=next==='en'?'Use space-separated ARPAbet symbols, such as S T R AE N D. This is not a spelling-to-phoneme converter.':'Enter a Korean word using Hangul syllables; it will be decomposed into initial, medial and final jamo.';
+  text.value=next==='en'?'S T R AE N D':'한국말';redrawExamples();runJS();
+}
+document.querySelectorAll('.lang-tab').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+document.getElementById('decode').addEventListener('click',runJS);
+text.addEventListener('keydown',e=>{if(e.key==='Enter')runJS()});
+document.getElementById('python').addEventListener('click',async e=>{
+  const b=e.currentTarget,s=document.getElementById('python-status');b.disabled=true;s.textContent='Loading original Python modules in Pyodide…';
+  try{
+    const raw=text.value;
+    // Use the same input validation as the immediate browser port.
+    MoseDemo.decode(language,raw);
+    const result=await MosePython.syllabifier(language,raw);
+    show(result,'python');s.textContent='Python decoder completed successfully in your browser.';
+  }catch(err){s.textContent='Could not execute Python: '+err.message+'  The instant browser version remains available.'}
+  finally{b.disabled=false}
+});
+setLang('en');
+</script></body></html>

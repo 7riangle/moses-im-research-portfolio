@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brood / Brewed Perception Experiment — Original Procedure</title>
+  <link href="https://unpkg.com/jspsych@8.2.2/css/jspsych.css" rel="stylesheet" type="text/css">
+  <script src="https://unpkg.com/jspsych@8.2.2"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@2.1.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.1.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.1.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@2.1.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-audio-button-response@2.1.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-slider-response@2.1.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-call-function@2.1.0"></script>
+</head>
+<body>
+  <script>
+    if (typeof window.initJsPsych !== 'function') {
+      document.body.innerHTML = '<div style="font:16px/1.65 Arial,sans-serif;max-width:680px;margin:90px auto;padding:0 24px"><h2>Unable to load jsPsych</h2><p>Check your internet connection and reload the experiment page. The original jsPsych library is loaded from unpkg.com.</p><p><a href="index.html">Return to introduction</a></p></div>';
+    }
+  </script>
+  <script>
+    if (typeof window.initJsPsych === 'function') {
+      const script = document.createElement('script');
+      script.src = 'brood_brewed.js';
+      script.onerror = function() {
+        document.body.innerHTML = '<p style="font:16px Arial,sans-serif;padding:32px">Experiment script could not load. <a href="index.html">Return to introduction</a>.</p>';
+      };
+      document.body.appendChild(script);
+    }
+  </script>
+</body>
+</html>
