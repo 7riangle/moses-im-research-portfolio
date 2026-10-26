@@ -29,9 +29,9 @@ document.getElementById('generate').addEventListener('click',()=>{
   document.getElementById('status').textContent='New random candidates generated. Each click produces a different sample.';
 });
 document.getElementById('python').addEventListener('click',async e=>{
-  const b=e.currentTarget,s=document.getElementById('python-status');b.disabled=true;s.textContent='Loading the Python runtime and project source…';
-  try{const result=await MosePython.phonotactics(Number(count.value));render(result,'python');s.textContent='Python implementation completed successfully inside your browser.';}
-  catch(err){s.textContent='Python runtime unavailable: '+err.message+'  The instant browser demonstration above still works.'}
+  const b=e.currentTarget,s=document.getElementById('python-status');b.disabled=true;s.textContent='Preparing Python…';
+  try{const result=await MosePython.phonotactics(Number(count.value), message => { s.textContent = message; });render(result,'python');s.textContent='Python implementation completed successfully inside your browser.';}
+  catch(err){console.error('Pyodide execution failed:', err);s.textContent='Python runtime unavailable: '+err.message+' The JavaScript demo above still works.'}
   finally{b.disabled=false}
 });
 render(MoseDemo.generate(Number(count.value)),'browser');

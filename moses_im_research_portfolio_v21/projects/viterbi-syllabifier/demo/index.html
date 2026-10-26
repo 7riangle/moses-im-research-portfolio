@@ -5,7 +5,7 @@
 <section class="panel"><div class="lang-tabs" role="tablist" aria-label="Language"><button class="lang-tab active" data-lang="en" role="tab" aria-selected="true">English</button><button class="lang-tab" data-lang="ko" role="tab" aria-selected="false">Korean · 한국어</button></div><div class="form-row"><div class="field"><label id="input-label" for="sequence">ARPAbet phoneme sequence</label><input id="sequence" value="S T R AE N D" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="input-help"></div><button class="run" id="decode">Decode sequence</button></div><div class="examples" id="examples"></div><div class="feedback" id="input-help">Use space-separated ARPAbet symbols; for example S T R AE N D. This is not an English spelling-to-sound converter.</div><div class="feedback" id="status" aria-live="polite"></div></section>
 <section class="panel"><p class="eyebrow">Best path</p><h2>Inferred syllable roles.</h2><div class="state-row" id="states" aria-live="polite"></div><p class="minor">O = Onset &nbsp;·&nbsp; N = Nucleus &nbsp;·&nbsp; C = Coda. These are the toy HMM's predictions, not verified syllable boundaries.</p><div class="terminal" id="terminal" aria-live="polite"></div></section>
 <section class="panel"><p class="eyebrow">Dynamic programming</p><h2>Log-score lattice.</h2><p class="copy">Each column is an observation; each row is a possible state. The highlighted cell at each step belongs to the final best Viterbi path. Darker cells represent relatively higher accumulated log-scores within this sequence.</p><div class="lattice-wrap" id="lattice"></div><div class="legend">Values are cumulative log-scores, not probabilities. −∞ indicates an impossible or heavily penalised path in the source implementation.</div>
-<details class="advanced"><summary>Run the Python HMM in your browser</summary><div class="python-inner"><p>Load the Python HMM and Viterbi implementation from this portfolio into Pyodide, execute the original decoder directly in your browser, and display its output in the same lattice view. An internet connection is needed for Pyodide's first load; no input leaves your browser.</p><button class="run" id="python">Run Python in browser</button><div class="status" id="python-status" aria-live="polite"></div></div></details></section>
+<details class="advanced"><summary>Run the Python HMM in your browser</summary><div class="python-inner"><p>Load the Python HMM and Viterbi implementation from this portfolio into Pyodide, execute the Python HMM implementation in your browser, and display its output in the same lattice view. An internet connection is needed for Pyodide's first load; no input leaves your browser.</p><button class="run" id="python">Run Python in browser</button><div class="status" id="python-status" aria-live="polite"></div></div></details></section>
 <section class="section" style="padding-top:45px"><p class="eyebrow">About the model</p><p class="copy">The original model uses hand-set transition and emission scores, rather than parameters learned from annotated speech. It may return unexpected labellings, especially near word boundaries or with ambiguous/unseen phones. Those outcomes are informative about the toy model's assumptions.</p><p class="minor">English uses ARPAbet-style phoneme tokens from the source inventory; Korean decomposes precomposed Hangul into jamo. <a class="secondary" href="https://github.com/7riangle/viterbi-syllabifier" target="_blank" rel="noopener">Original repository</a></p><div class="actions"><a class="primary" href="../../../index.html#projects">Return to homepage</a><a class="secondary" href="../index.html">Project overview</a></div></section></main>
 <footer class="shell"><span>© Moses Im</span><span>Client-side computation · No data saved</span></footer>
 <script src="../../demo-engine.js"></script><script src="../../python-runner.js"></script>
@@ -18,7 +18,7 @@ function show(result,origin){
   MoseDemo.renderStates(document.getElementById('states'),result);
   MoseDemo.renderLattice(document.getElementById('lattice'),result);
   document.getElementById('terminal').textContent='>>> '+(language==='en'?`phones = ${JSON.stringify(result.phones)}`:`jamo = ${JSON.stringify(result.phones)}`)+'\n'+`states = ${JSON.stringify(result.path)}`+'\n\n# '+(origin==='python'?'Executed with original Python':'Instant browser adaptation');
-  status.textContent=`Decoded ${result.phones.length} symbols. ${origin==='python'?'Original Python':'Instant browser demo'} result shown.`;
+  status.textContent=`Decoded ${result.phones.length} symbols. ${origin==='python'?'Python implementation':'Instant browser demo'} result shown.`;
 }
 function redrawExamples(){
   examples.replaceChildren();
@@ -40,14 +40,14 @@ document.querySelectorAll('.lang-tab').forEach(b=>b.addEventListener('click',()=
 document.getElementById('decode').addEventListener('click',runJS);
 text.addEventListener('keydown',e=>{if(e.key==='Enter')runJS()});
 document.getElementById('python').addEventListener('click',async e=>{
-  const b=e.currentTarget,s=document.getElementById('python-status');b.disabled=true;s.textContent='Loading original Python modules in Pyodide…';
+  const b=e.currentTarget,s=document.getElementById('python-status');b.disabled=true;s.textContent='Preparing Python…';
   try{
     const raw=text.value;
     // Use the same input validation as the immediate browser port.
     MoseDemo.decode(language,raw);
-    const result=await MosePython.syllabifier(language,raw);
+    const result=await MosePython.syllabifier(language,raw, message => { s.textContent = message; });
     show(result,'python');s.textContent='Python decoder completed successfully in your browser.';
-  }catch(err){s.textContent='Could not execute Python: '+err.message+'  The instant browser version remains available.'}
+  }catch(err){console.error('Pyodide execution failed:', err);s.textContent='Python execution failed: '+err.message+' The JavaScript demo above still works.'}
   finally{b.disabled=false}
 });
 setLang('en');
