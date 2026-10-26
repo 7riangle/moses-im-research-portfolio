@@ -32,9 +32,9 @@
         layer.appendChild(dot);
         placed.push(code);
       }
-      summary.textContent = count === 0
+      summary.innerHTML = count === 0
         ? 'The first dots will appear when visitors stop by.'
-        : `People from ${count} ${count === 1 ? 'country has' : 'countries have'} stopped by this website so far.`;
+        : `People from <strong><u>${count}</u></strong> ${count === 1 ? 'country has' : 'countries have'} stopped by this website so far.`;
       privacy.textContent = 'Only approximate countries are recorded, not precise locations or unique visitor identities.';
     } catch (error) {
       summary.textContent = 'This map will light up as visitors stop by.';
